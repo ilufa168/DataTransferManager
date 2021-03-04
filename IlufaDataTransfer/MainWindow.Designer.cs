@@ -38,17 +38,21 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.bUpdateItems = new System.Windows.Forms.Button();
+            this.bRefreshSales = new System.Windows.Forms.Button();
             this.Rtb_Activity_Log = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.bUpdateCategories = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // B_Settings
             // 
             this.B_Settings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.B_Settings.Location = new System.Drawing.Point(34, 464);
+            this.B_Settings.Location = new System.Drawing.Point(34, 467);
             this.B_Settings.Name = "B_Settings";
             this.B_Settings.Size = new System.Drawing.Size(78, 25);
             this.B_Settings.TabIndex = 0;
@@ -58,6 +62,7 @@
             // 
             // B_Start_Transfer_To_Hq
             // 
+            this.B_Start_Transfer_To_Hq.Enabled = false;
             this.B_Start_Transfer_To_Hq.ForeColor = System.Drawing.Color.DarkGreen;
             this.B_Start_Transfer_To_Hq.Location = new System.Drawing.Point(254, 56);
             this.B_Start_Transfer_To_Hq.Name = "B_Start_Transfer_To_Hq";
@@ -69,6 +74,7 @@
             // 
             // DTP_From_Date
             // 
+            this.DTP_From_Date.Enabled = false;
             this.DTP_From_Date.Location = new System.Drawing.Point(10, 97);
             this.DTP_From_Date.Name = "DTP_From_Date";
             this.DTP_From_Date.Size = new System.Drawing.Size(200, 22);
@@ -137,6 +143,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.bUpdateCategories);
+            this.groupBox2.Controls.Add(this.bUpdateItems);
+            this.groupBox2.Controls.Add(this.bRefreshSales);
             this.groupBox2.ForeColor = System.Drawing.Color.DarkTurquoise;
             this.groupBox2.Location = new System.Drawing.Point(34, 218);
             this.groupBox2.Name = "groupBox2";
@@ -146,14 +155,36 @@
             this.groupBox2.Text = "Data Refresh";
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
+            // bUpdateItems
+            // 
+            this.bUpdateItems.ForeColor = System.Drawing.Color.DarkSlateGray;
+            this.bUpdateItems.Location = new System.Drawing.Point(107, 30);
+            this.bUpdateItems.Name = "bUpdateItems";
+            this.bUpdateItems.Size = new System.Drawing.Size(85, 51);
+            this.bUpdateItems.TabIndex = 3;
+            this.bUpdateItems.Text = "Update Items";
+            this.bUpdateItems.UseVisualStyleBackColor = true;
+            this.bUpdateItems.Click += new System.EventHandler(this.bUpdateItems_Click);
+            // 
+            // bRefreshSales
+            // 
+            this.bRefreshSales.ForeColor = System.Drawing.Color.DarkGreen;
+            this.bRefreshSales.Location = new System.Drawing.Point(17, 30);
+            this.bRefreshSales.Name = "bRefreshSales";
+            this.bRefreshSales.Size = new System.Drawing.Size(85, 51);
+            this.bRefreshSales.TabIndex = 2;
+            this.bRefreshSales.Text = "Update Diskon";
+            this.bRefreshSales.UseVisualStyleBackColor = true;
+            this.bRefreshSales.Click += new System.EventHandler(this.bRefreshSales_Click);
+            // 
             // Rtb_Activity_Log
             // 
             this.Rtb_Activity_Log.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Rtb_Activity_Log.Location = new System.Drawing.Point(445, 43);
+            this.Rtb_Activity_Log.Location = new System.Drawing.Point(445, 39);
             this.Rtb_Activity_Log.Name = "Rtb_Activity_Log";
-            this.Rtb_Activity_Log.Size = new System.Drawing.Size(434, 439);
+            this.Rtb_Activity_Log.Size = new System.Drawing.Size(539, 442);
             this.Rtb_Activity_Log.TabIndex = 5;
             this.Rtb_Activity_Log.Text = "";
             // 
@@ -161,7 +192,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.DarkTurquoise;
-            this.label3.Location = new System.Drawing.Point(445, 24);
+            this.label3.Location = new System.Drawing.Point(445, 20);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 16);
             this.label3.TabIndex = 6;
@@ -171,12 +202,23 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // bUpdateCategories
+            // 
+            this.bUpdateCategories.ForeColor = System.Drawing.Color.DarkSlateGray;
+            this.bUpdateCategories.Location = new System.Drawing.Point(197, 30);
+            this.bUpdateCategories.Name = "bUpdateCategories";
+            this.bUpdateCategories.Size = new System.Drawing.Size(85, 51);
+            this.bUpdateCategories.TabIndex = 4;
+            this.bUpdateCategories.Text = "Update Categories";
+            this.bUpdateCategories.UseVisualStyleBackColor = true;
+            this.bUpdateCategories.Click += new System.EventHandler(this.bUpdateCategories_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(891, 494);
+            this.ClientSize = new System.Drawing.Size(996, 497);
             this.Controls.Add(this.B_Settings);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.Rtb_Activity_Log);
@@ -191,6 +233,7 @@
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -211,6 +254,9 @@
         private System.Windows.Forms.Label Lbl_Location;
         private System.Windows.Forms.Label label4;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button bRefreshSales;
+        private System.Windows.Forms.Button bUpdateItems;
+        private System.Windows.Forms.Button bUpdateCategories;
     }
 }
 

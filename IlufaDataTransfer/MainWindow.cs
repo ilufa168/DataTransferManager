@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using WaitingBox;
+using IlufaDataTransfer.Models;
 
 namespace IlufaDataTransfer
 {
@@ -17,6 +18,7 @@ namespace IlufaDataTransfer
         SettingsManager AppSettings = new SettingsManager();
         DataTransferManager dtm;
         Boolean transfer_in_progress = false;
+        bool _ENV_TEST = false;
         public MainWindow()
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -67,6 +69,8 @@ namespace IlufaDataTransfer
         private void Write_To_Message_Log(string message)
         {
             Rtb_Activity_Log.AppendText("[INFO] " + message  + Environment.NewLine);
+            Rtb_Activity_Log.SelectionStart = Rtb_Activity_Log.Text.Length;
+            Rtb_Activity_Log.ScrollToCaret();
         }
 
         private void Write_Error_to_Activity_log(string error)
@@ -79,7 +83,6 @@ namespace IlufaDataTransfer
 
         private void B_Start_Transfer_To_Hq_Click(object sender, EventArgs e)
         {
-
             if (transfer_in_progress)
                 return;
 
@@ -132,7 +135,7 @@ namespace IlufaDataTransfer
             //Check to make sure the connection is not active
             if (!VC.CheckActive())
             {
-                Write_To_Message_Log("Opening VNP Connection to Jakarta");
+                Write_To_Message_Log("Opening VPN Connection to Jakarta");
                 VC.ConnectJakarta();
             }
             if (!VC.CheckActive())
@@ -229,6 +232,187 @@ namespace IlufaDataTransfer
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
+        }
+
+        private bool ConnectToVpn()
+        {
+            bool result = false;
+            //
+            //CONNECT TO VPN
+            //
+            VPNController VC = new VPNController(AppSettings);
+
+            //Write_To_Message_Log("Connecting to Jakarta to get current sales");
+            //Check to make sure the connection is not active
+            if (!VC.CheckActive())
+            {
+                Write_To_Message_Log("Opening VNP Connection to Jakarta");
+                result = VC.ConnectJakarta();
+            }
+            if (!VC.CheckActive())
+            {
+                Write_Error_to_Activity_log("ERROR - Failed to connect to Jakarta - transfer aborting");
+                return false;
+            }
+            else
+            {
+                Write_To_Message_Log("VPN connection to Jakarta completed successfully");
+                return result;
+            }
+        }
+        private void bRefreshSales_Click(object sender, EventArgs e)
+        {
+            //
+            //CONNECT TO VPN
+            //
+            VPNController VC = new VPNController(AppSettings);
+
+            Write_To_Message_Log("Connecting to Jakarta to get current sales");
+            //Check to make sure the connection is not active
+            if (!VC.CheckActive())
+            {
+                Write_To_Message_Log("Opening VNP Connection to Jakarta");
+                VC.ConnectJakarta();
+            }
+            if (!VC.CheckActive())
+            {
+                Write_Error_to_Activity_log("ERROR - Failed to connect to Jakarta - transfer aborting");
+                return;
+            }
+            else
+            {
+                Write_To_Message_Log("VPN connection to Jakarta completed successfully");
+            }
+            Write_To_Message_Log("Getting current sales, please wait....");
+            //Get Jakarta Sales
+            List<PosSale> results = dtm.GetCurrentStoreSales();
+
+            VC.DisconnectJakarta();
+
+            if (results.Count == 0)
+                Write_Error_to_Activity_log("No sales found, something went wrong.");
+
+            dtm.ClearSales();
+
+            foreach (PosSale sale in results)
+            {
+                Write_To_Message_Log("Adding sale id:[ " + sale.Pos_Sale_Id.ToString() + "]");
+                dtm.InsertSale(sale);
+            }
+            Write_To_Message_Log("Closing VPN Connection");
+            
+
+
+        }
+
+        private async Task UpdateItems()
+        {
+            //
+            //CONNECT TO VPN
+            //
+            VPNController VC = new VPNController(AppSettings);
+
+            Write_To_Message_Log("Connecting to Jakarta to retrieve item updates"); //add in the date trigger
+            if (!ConnectToVpn())
+            {
+                Write_Error_to_Activity_log("Failed to connect to VPN, check internet connection"); //add in the date trigger
+                return;
+            }
+            DateTime checkpoint = DateTime.Now;
+            var update_list = dtm.GetItemUpdates(AppSettings.items_last_update);
+            Write_To_Message_Log("Found " + update_list.Count + " Item Updates");
+
+            Write_To_Message_Log("Updating items on local database");
+            //Now update the items one by one, because im lazy!
+            int cnt_i = 0, cnt_u = 0, cnt_e = 0;
+            foreach (Item i in update_list)
+            {
+                string result = await dtm.UpdateItem(i);
+                if (result == "INSERTED")
+                {
+                    Write_To_Message_Log("Item [ " + i.ITEM_CODE + "] added to local database");
+                    cnt_i++;
+                }
+                else if (result == "UPDATED")
+                {
+                    Write_To_Message_Log("Item [ " + i.ITEM_CODE + "] updated in local database");
+                    cnt_u++;
+                }
+                else
+                {
+                    Write_Error_to_Activity_log(result + ": Item [ " + i.ITEM_CODE + "] SOMETHING WENT WRONG, ITEM SKIPPED");
+                    cnt_e++;
+                }
+            }
+            Write_To_Message_Log("Disconnecting from Jakarta");
+            if (!(_ENV_TEST))
+                VC.DisconnectJakarta();
+            //Update the items last to the checkpoint where we started
+            AppSettings.items_last_update = checkpoint;
+            AppSettings.SaveSettings();
+            Write_To_Message_Log("Finished!! " + cnt_i.ToString() + " New items added " + cnt_u + " items updated ");
+            if (cnt_e > 0)
+                Write_Error_to_Activity_log(cnt_e + " items were not able to get updated due to errors");
+
+
+        }
+
+        private async void bUpdateItems_Click(object sender, EventArgs e)
+
+      //      private void bUpdateItems_Click(object sender, EventArgs e)
+        {
+            await UpdateItems();
+        }
+
+        private async Task UpdateCategories()
+        {
+            VPNController VC = new VPNController(AppSettings);
+
+            Write_To_Message_Log("Connecting to Jakarta to retrieve category updates"); //add in the date trigger
+            if (!ConnectToVpn())
+            {
+                Write_Error_to_Activity_log("Failed to connect to VPN, check internet connection"); //add in the date trigger
+                return;
+            }
+            var category_list = await dtm.GetCategoryUpdates();
+            Write_To_Message_Log(category_list.Count.ToString() +  "Categories retrieve to update or add"); //add in the date trigger
+
+            int cnt_i = 0, cnt_u = 0, cnt_e = 0;
+            foreach (var cat in category_list)
+            {
+                string result = await dtm.ProcessCategory(cat);
+
+                if (result == "UPDATE")
+                {
+                    Write_To_Message_Log("Category " + cat.CODE + "-" + cat.DESCRIPTION + " updated on local database");
+                    cnt_u++;
+                } else
+                {
+                    if (result == "INSERT")
+                    {
+                        Write_To_Message_Log("[NEW] Category " + cat.CODE + "-" + cat.DESCRIPTION + " added to local database");
+                        cnt_i++;
+                    } else
+                    {
+                        Write_Error_to_Activity_log("[ERROR] Category " + cat.CODE + "-" + cat.DESCRIPTION + " was not updated.");
+                        cnt_e++;
+                    }
+                } 
+
+            }
+
+            Write_To_Message_Log("Disconnecting from Jakarta");
+            if (!(_ENV_TEST))
+                VC.DisconnectJakarta();
+
+            Write_To_Message_Log("Finished!! " + cnt_i.ToString() + " New categories added " + cnt_u + " categories refreshed ");
+            if (cnt_e > 0)
+                Write_Error_to_Activity_log(cnt_e + " items were not able to get updated due to errors");
+            return;
+        }
+        private async void bUpdateCategories_Click(object sender, EventArgs e)
+        {
+            await UpdateCategories();
         }
     }
 }

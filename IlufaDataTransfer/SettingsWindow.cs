@@ -23,6 +23,7 @@ namespace IlufaDataTransfer
             Txt_Oracle_IP.Text = App_Settings.oracle_IP;
             Txt_Remote_IP.Text = App_Settings.remote_oracle_IP;
             Txt_VPN_Name.Text = App_Settings.vpn_name;
+            Txt_Item_Last_Update.Text = App_Settings.items_last_update.ToString();
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -35,9 +36,15 @@ namespace IlufaDataTransfer
             App_Settings.oracle_IP = Txt_Oracle_IP.Text;
             App_Settings.remote_oracle_IP = Txt_Remote_IP.Text;
             App_Settings.vpn_name = Txt_VPN_Name.Text;
+            App_Settings.items_last_update = DateTime.Parse(Txt_Item_Last_Update.Text);
 
-
-            App_Settings.SaveSettings();
+            if (App_Settings.SaveSettings())
+            {
+                MessageBox.Show("Settings Saved", "Success");
+                this.Close();
+            } else
+                MessageBox.Show("Unable to save settings!", "Failure");
+            
         }
     }
 }

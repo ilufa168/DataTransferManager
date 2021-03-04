@@ -37,7 +37,7 @@ namespace IlufaDataTransfer
 
         public bool CheckActive()
         {
-            if (vpn == null)
+            if (vpn == null || !(vpn.IsActive))
                 return false;
 
             return vpn.IsActive;

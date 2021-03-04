@@ -17,6 +17,7 @@ namespace IlufaDataTransfer
         private string _oracle_IP = "192.168.1.3";
         private string _remote_oracle_IP = "192.168.1.9";
         private string _vpn_name = "VPN";
+        public DateTime items_last_update { get; set; } = DateTime.Parse("2/1/2021");
 
         public string location
         {
@@ -59,8 +60,17 @@ namespace IlufaDataTransfer
             ini_settings["Settings"]["oracle_ip_address"] = oracle_IP;
             ini_settings["Settings"]["remote_oracle_ip_address"] = remote_oracle_IP;
             ini_settings["Settings"]["vpn_name"] = vpn_name;
+            ini_settings["Settings"]["items_last_update"] = items_last_update.ToString();
 
-            parser.WriteFile(di.ToString() + "\\" + settings_file_name, ini_settings);
+            try 
+            {
+                parser.WriteFile(di.ToString() + "\\" + settings_file_name, ini_settings);
+            }
+            catch
+            {
+                return false;
+            }
+            
 
 
             return true;
@@ -86,7 +96,16 @@ namespace IlufaDataTransfer
             oracle_IP = ini_settings["Settings"]["oracle_ip_address"];
             remote_oracle_IP = ini_settings["Settings"]["remote_oracle_ip_address"];
             vpn_name = ini_settings["Settings"]["vpn_name"];
-
+            try
+            {
+                string s = ini_settings["Settings"]["items_last_update"];
+                items_last_update = DateTime.Parse(s);
+                Console.WriteLine(items_last_update);
+            }
+            catch
+            {
+                items_last_update = DateTime.Parse("12/31/2020");
+            }
 
             return;
         }
