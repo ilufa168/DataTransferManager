@@ -24,8 +24,11 @@ namespace IlufaDataTransfer
         private string h_jual_db = "H_JUAL";
         private string d_jual_db = "D_JUAL";
         private string pay_jual_db = "PAY_JUAL";
-        private string item_db = "ITEM";
+        
+        //private string item_db = "ITEM_TEST";
+        //private string category_db = "CODES_TEST";
         private string category_db = "CODES";
+        private string item_db = "ITEM";
 
         private SettingsManager AppSettings;
         //private List<IlufaSaleTransaction> transaction_list = new List<IlufaSaleTransaction>();

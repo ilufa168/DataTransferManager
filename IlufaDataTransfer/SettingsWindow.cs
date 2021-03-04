@@ -24,6 +24,9 @@ namespace IlufaDataTransfer
             Txt_Remote_IP.Text = App_Settings.remote_oracle_IP;
             Txt_VPN_Name.Text = App_Settings.vpn_name;
             Txt_Item_Last_Update.Text = App_Settings.items_last_update.ToString();
+            dtpLastUpdate.Value = App_Settings.items_last_update;
+            dtpLastUpdate.Format = DateTimePickerFormat.Custom;
+            dtpLastUpdate.CustomFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern;
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -36,7 +39,8 @@ namespace IlufaDataTransfer
             App_Settings.oracle_IP = Txt_Oracle_IP.Text;
             App_Settings.remote_oracle_IP = Txt_Remote_IP.Text;
             App_Settings.vpn_name = Txt_VPN_Name.Text;
-            App_Settings.items_last_update = DateTime.Parse(Txt_Item_Last_Update.Text);
+            //App_Settings.items_last_update = DateTime.Parse(Txt_Item_Last_Update.Text);
+            App_Settings.items_last_update = dtpLastUpdate.Value;
 
             if (App_Settings.SaveSettings())
             {

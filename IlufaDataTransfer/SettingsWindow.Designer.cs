@@ -40,6 +40,7 @@
             this.ButtonSave = new System.Windows.Forms.Button();
             this.Txt_Item_Last_Update = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.dtpLastUpdate = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // label1
@@ -143,11 +144,13 @@
             // 
             // Txt_Item_Last_Update
             // 
-            this.Txt_Item_Last_Update.Location = new System.Drawing.Point(179, 178);
+            this.Txt_Item_Last_Update.Enabled = false;
+            this.Txt_Item_Last_Update.Location = new System.Drawing.Point(179, 214);
             this.Txt_Item_Last_Update.Name = "Txt_Item_Last_Update";
             this.Txt_Item_Last_Update.Size = new System.Drawing.Size(234, 22);
             this.Txt_Item_Last_Update.TabIndex = 12;
             this.Txt_Item_Last_Update.Text = "1/1/2021";
+            this.Txt_Item_Last_Update.Visible = false;
             // 
             // label2
             // 
@@ -158,12 +161,20 @@
             this.label2.TabIndex = 11;
             this.label2.Text = "Items Last Update:";
             // 
+            // dtpLastUpdate
+            // 
+            this.dtpLastUpdate.Location = new System.Drawing.Point(179, 181);
+            this.dtpLastUpdate.Name = "dtpLastUpdate";
+            this.dtpLastUpdate.Size = new System.Drawing.Size(234, 22);
+            this.dtpLastUpdate.TabIndex = 13;
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LemonChiffon;
             this.ClientSize = new System.Drawing.Size(453, 442);
+            this.Controls.Add(this.dtpLastUpdate);
             this.Controls.Add(this.Txt_Item_Last_Update);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ButtonSave);
@@ -201,5 +212,6 @@
         private System.Windows.Forms.Button ButtonSave;
         private System.Windows.Forms.TextBox Txt_Item_Last_Update;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.DateTimePicker dtpLastUpdate;
     }
 }
